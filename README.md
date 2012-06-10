@@ -1,18 +1,6 @@
 dgDebug 0.4.0
 =============
 
-**Quickly USAGE:
-
-	<?php
-	require('../_dgDebug/debug.php');
-
-	dbg()->d($varToDump, 'A title Here');
-
-	dbg()
-		->d($varToDump, 'A title Here')
-		->d($AnotherVarToDump, 'Another title Here')
-	;
-
 Description:
 ------------
 
@@ -39,3 +27,16 @@ FEATURES
 - Mark Blocs as viewed (right click in block title)
 - Higlight Variables, Array, Object, String etc...
 - Collapse Arrays in Arrays, Object in Arrays etc... (click on brace)
+
+Quickly USAGE:
+--------------
+
+	<?php
+	require('../_dgDebug/debug.php');
+
+	dbg()->d($varToDump, 'A title Here');
+
+	dbg()
+		->d($varToDump, 'A title Here')
+		->d($AnotherVarToDump, 'Another title Here')
+	;

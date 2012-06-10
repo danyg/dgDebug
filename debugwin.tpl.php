@@ -14,16 +14,6 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-/**
- * @fileOverview loadDisplay, Codigo que muestra un rectangulo con una barra de
- * progreso para mostrar el estado de carga de una pagina, segun la cantidad
- * de ficheros a cargar. TENER EN CUENTA: Este objeto no puede saber los
- * ficheros que se van a cargar, simplemente dispone de metodos para marcar un
- * +1 en ficheros a cargar y otro metodo para un -1.
- *
- * @author Daniel Goberitz <https://github.com/danyg>
- * @package dgDebug
  */?><script type="text/javascript">
 if(typeof(jQuery) == 'undefined'){
 	<?php echo file_get_contents(DGDEBUG_ROOT_PATH . 'jquery.js');?>
