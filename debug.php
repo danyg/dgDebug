@@ -1,4 +1,30 @@
 <?php
+/*
+ * Copyright (C) 2011-2012 Daniel Goberitz
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * @fileOverview loadDisplay, Codigo que muestra un rectangulo con una barra de
+ * progreso para mostrar el estado de carga de una pagina, segun la cantidad
+ * de ficheros a cargar. TENER EN CUENTA: Este objeto no puede saber los
+ * ficheros que se van a cargar, simplemente dispone de metodos para marcar un
+ * +1 en ficheros a cargar y otro metodo para un -1.
+ *
+ * @author Daniel Goberitz <https://github.com/danyg>
+ * @package dgDebug
+ */
 
 define("DGDEBUG_ROOT_PATH", dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define("DGDEBUG_LOG_PATH", DGDEBUG_ROOT_PATH . 'logs' . DIRECTORY_SEPARATOR);
