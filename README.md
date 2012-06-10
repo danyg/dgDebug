@@ -22,7 +22,7 @@ dbg()
 	al mismo tiempo se puede guardar un registro log de dichar variable. Ver
 	los stacktrace en un punto concreto del codigo.
 		
-		Una de las aportaciones mas grandes en comparación con respecto a 
+		Una de las aportaciones mas grandes en comparaciï¿½n con respecto a 
 	utilizar echo, var_dump, var_export, print_r y similares es que siempre 
 	veremos en que linea se esta haciendo el dump. De forma que es mucho mas 
 	sencillo eliminar
