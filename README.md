@@ -4,14 +4,14 @@ dgDebug 0.4.0
 **Quickly USAGE:
 
 <?php
-require('../_dgDebug/debug.php');
+	require('../_dgDebug/debug.php');
 
-dbg()->d($varToDump, 'A title Here');
+	dbg()->d($varToDump, 'A title Here');
 
-dbg()
-	->d($varToDump, 'A title Here')
-	->d($AnotherVarToDump, 'Another title Here')
-;
+	dbg()
+		->d($varToDump, 'A title Here')
+		->d($AnotherVarToDump, 'Another title Here')
+	;
 
 Description:
 ------------
