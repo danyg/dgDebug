@@ -3,7 +3,7 @@ dgDebug 0.4.0
 
 **Quickly USAGE:
 
-<?php
+	<?php
 	require('../_dgDebug/debug.php');
 
 	dbg()->d($varToDump, 'A title Here');
