@@ -1,4 +1,4 @@
-dgDebug 0.4.0
+dgDebug 0.4.1
 =============
 
 Description:
@@ -37,6 +37,14 @@ Quickly USAGE:
 	dbg()->d($varToDump, 'A title Here');
 
 	dbg()
+		->d($varToDump, 'A title Here')
+		->d($AnotherVarToDump, 'Another title Here')
+	;
+
+	/**
+	* @since 0.4.1
+	*/
+	dbg('A block Title')
 		->d($varToDump, 'A title Here')
 		->d($AnotherVarToDump, 'Another title Here')
 	;

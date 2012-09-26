@@ -48,6 +48,9 @@ class dgDebug{
 		self::$instance->cut = $title . self::$instance->getTrace(1);
 		self::$instance->setToDebugOnly();
 		self::$instance->modeOff = false;
+	
+		self::$instance->addCut();
+		
 		return self::$instance;
 	}
 	
@@ -162,8 +165,7 @@ class dgDebug{
 	 */
 	public function debug($data, $title=false){
 		if(!$this->isAvailable())return $this;
-		
-		$this->addCut();
+
 		$this->data =& $data;
 		
 		$this->addToStack($title);
