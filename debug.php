@@ -1,20 +1,4 @@
 <?php
-/*
- * Copyright (C) 2011-2012 Daniel Goberitz
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 
 define("DGDEBUG_ROOT_PATH", dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define("DGDEBUG_LOG_PATH", DGDEBUG_ROOT_PATH . 'logs' . DIRECTORY_SEPARATOR);
@@ -24,6 +8,9 @@ if(!defined("DGDEBUG_HIGHLIGHT_MODE"))
 	define("DGDEBUG_HIGHLIGHT_MODE", true);// ON
 
 class dgDebug{
+	/**
+	 * @var dgDebug
+	 */
 	static private $instance;
 	private $data;
 	private $stack = array();
@@ -37,6 +24,9 @@ class dgDebug{
 	private $toLog=false;
 	private $modeOff=false;
 	private $modeGlobalOff=false;
+	private $fixMode=false;
+	private $version = '0.4.1';
+	private $cut='';
 
 	protected function __construct(){
 		$this->console = DGDEBUG_CONSOLE_MODE;
@@ -50,10 +40,12 @@ class dgDebug{
 	/**
 	 * @return dgDebug
 	 */
-	public function _(){
+	static public function _($title=''){
 		if(!(self::$instance instanceof dgDebug))
 			self::$instance = new dgDebug();
 		
+		if(!empty($title)) $title = '[<strong>'.$title.'</strong>] ';
+		self::$instance->cut = $title . self::$instance->getTrace(1);
 		self::$instance->setToDebugOnly();
 		self::$instance->modeOff = false;
 		return self::$instance;
@@ -71,8 +63,6 @@ class dgDebug{
 	// PUBLICS
 	
 	/**
-	 * Turn off the dbg Block if $cond is true
-	 * @param {boolean} $cond
 	 * @return dgDebug
 	 */
 	public function setModeOffIf($cond){
@@ -82,7 +72,6 @@ class dgDebug{
 	}
 
 	/**
-	 * Turn off the all dbg Blocks if $cond is true
 	 * @return dgDebug
 	 */
 	public function setModeGlobalOffIf($cond){
@@ -90,68 +79,77 @@ class dgDebug{
 		else		$this->modeGlobalOn();
 		return $this;
 	}	
+
+	/**
+	 * @return dgDebug
+	 */	
+	public function highlightOff(){
+		$this->highlightOn = false;
+		return $this;
+	}
 	
 	/**
-	 * Turn off the actual dbg block
-	 * 
+	 * @return dgDebug
+	 */	
+	public function highlightOn(){
+		$this->highlightOn = true;
+		return $this;
+	}
+	
+	/**
 	 * @return dgDebug
 	 */
 	public function modeOff(){$this->modeOff = true;return $this;}
-	
 	/**
-	 * Alias of dgDebug::modeOff
-	 * @see dgDebug::modeOff
 	 * @return dgDebug
 	 */
 	public function setModeOff(){$this->modeOff = true;return $this;}	
-	
 	/**
-	 * Turn off all dbg Blocks
-	 * 
 	 * @return dgDebug
 	 */
+
 	public function modeGlobalOff(){$this->modeGlobalOff = true;return $this;}
-	
 	/**
-	 * Alias of dgDebug::modeGlobalOff
-	 * @see dgDebug::modeGlobalOff
 	 * @return dgDebug
 	 */
 	public function setModeGlobalOff(){$this->modeGlobalOff = true;return $this;}
 
 	/**
-	 * Turn on the dbg Block
-	 * 
 	 * @return dgDebug
 	 */
 	public function modeOn(){$this->modeOff = false;return $this;}
-	
 	/**
-	 * Alias of dgDebug::modeOn
-	 * @see dgDebug::modeOn
 	 * @return dgDebug
 	 */
 	public function setModeOn(){$this->modeOff = false;return $this;}	
-	
 	/**
-	 * Turn on All dbg Blocks
-	 * 
 	 * @return dgDebug
 	 */
+
 	public function modeGlobalOn(){$this->modeGlobalOff = false;return $this;}
-	
 	/**
-	 * Alias of dgDebug::modeGlobalOn
-	 * @see dgDebug::modeGlobalOn
 	 * @return dgDebug
 	 */
 	public function setModeGlobalOn(){$this->modeGlobalOff = false;return $this;}
 	
+	/**
+	 * @return dgDebug
+	 */
+	public function setFixModeOn(){
+		$this->fixMode = true;
+		return $this;
+	}
 
 	/**
-	 * Sets the file name to be used for log.
-	 * Path: _dgDebug/logs/{$file}
-	 * 
+	 * @return dgDebug
+	 */
+	public function setFixModeOff(){
+		$this->fixMode = false;
+		return $this;
+	}
+
+
+	/**
 	 * @return dgDebug
 	 */
 	public function setLogFile($file){
@@ -160,13 +158,12 @@ class dgDebug{
 	}
 	
 	/**
-	 * Dump the $data var in the HTML console
-	 * 
 	 * @return dgDebug
 	 */
 	public function debug($data, $title=false){
 		if(!$this->isAvailable())return $this;
-
+		
+		$this->addCut();
 		$this->data =& $data;
 		
 		$this->addToStack($title);
@@ -174,9 +171,6 @@ class dgDebug{
 	}	
 	
 	/**
-	 * Dump the $data var in the logFile.
-	 * If the logfile is not seted be used the default
-	 * 
 	 * @return dgDebug
 	 */
 	public function log($data, $title=false, $logFile = null){
@@ -191,33 +185,18 @@ class dgDebug{
 	}
 	
 	/**
-	 * Dump the $data var in HTML Console AND LogFile depends of
-	 *  dbg()->setToLogOnly() dbg()->setToDebugOnly()
-	 * If the logfile is not seted be used the default
-	 * 
-	 * @see dgDebug::setToLogOnly
-	 * @see dgDebug::setToDebugOnly
-	 * 
 	 * @return dgDebug
 	 */
 	public function d($data, $title=false){
 		if(!$this->isAvailable()){return $this;}
 
-		if($this->toDebug)	$this->debug(&$data, $title);
-		if($this->toLog)	$this->log(&$data, $title);
+		if($this->toDebug)	$this->debug($data, $title);
+		if($this->toLog)	$this->log($data, $title);
 
 		return $this;
 	}
 	
-	/**
-	 * Shows the call stacktrace In the HTML Console AND logfile depends of
-	 * dbg()->setToLogOnly() dbg()->setToDebugOnly()
-	 * 
-	 * If the logfile is not seted be used the default
-	 * 
-	 * @return dgDebug
-	 */
-	public function trace(){
+	public function trace($title=""){
 		if(!$this->isAvailable())return $this;
 
 		$backtrace = debug_backtrace();
@@ -231,12 +210,14 @@ class dgDebug{
 			if(!empty($step["function"]))
 				$tmp .= $step["function"] . "()";
 
-			$tmp .= (empty($tmp) ? "" : " | ") . $step["file"] . ":" . $step["line"];
+			$tmp .= (empty($tmp) ? "" : " | ") . @$step["file"] . ":" . @$step["line"];
 
 			$this->data[] = $tmp;
 		}
 		
-		$title = "Trace";
+		if(empty($title))	$title = "Trace";
+		else				$title = "Trace: " . $title;
+
 		if($this->toDebug)	$this->addToStack($title);
 		if($this->toLog)	$this->addToLog($title);
 		
@@ -244,64 +225,60 @@ class dgDebug{
 	}
 	
 	/**
-	 * Sets the logmode ON when use dbg()->d() AND sets the log filename
-	 * 
-	 * @param $file=false		The log filename. the real path be 
-	 *							_dgdebug/logs/{$file}
+	 * @param $file		nombre del log que se utilizara, al pasar este parm este metodo tambien hace un setLogFile
 	 * @return dgDebug
 	 */
 	public function setToLog($file=false){
+		if($this->fixMode === false){
 			if($file !== false) $this->setLogFile($file);
 		
 			$this->toLog = true;
-			return $this;
+		}
+		return $this;
 	}
 
 	/**
-	 * Sets the HTML Console Output ON when use dbg()->d()
-	 * 
 	 * @return dgDebug
 	 */
 	public function setToDebug(){
-		$this->toDebug = true;
+		if($this->fixMode === false){
+			$this->toDebug = true;
+		}
 		return $this;
 	}
 	
 	/**
-	 * Sets the logmode ON AND HTML console Output OFF AND sets the log filename
-	 * 
-	 * @param $file=false		The log filename. the real path be 
-	 *							_dgdebug/logs/{$file}
-	 * 
 	 * @return dgDebug
 	 */
 	public function setToLogOnly($file = false){
-		if($file !== false) $this->setLogFile($file);
+		if($this->fixMode === false){
+			if($file !== false) $this->setLogFile($file);
 		
-		$this->toDebug = false;
-		$this->toLog = true;
+			$this->toDebug = false;
+			$this->toLog = true;
+		}
 		return $this;
 	}
 
 	/**
-	 * Sets the HTML console Output ON AND logmode OFF 
-	 * 
 	 * @return dgDebug
 	 */
 	public function setToDebugOnly(){
-		$this->toDebug = true;
-		$this->toLog = false;
+		if($this->fixMode === false){
+			$this->toDebug = true;
+			$this->toLog = false;
+		}
 		return $this;
 	}
 	
 	/**
-	 * Sets the HTML console Output ON AND logmode ON (default mode)
-	 * 
 	 * @return dgDebug
 	 */
 	public function setToLogNDebug(){
-		$this->toDebug = true;
-		$this->toLog = true;
+		if($this->fixMode === false){
+			$this->toDebug = true;
+			$this->toLog = true;
+		}
 		return $this;
 	}
 	
@@ -313,21 +290,23 @@ class dgDebug{
 		return true;
 	}
 
-	protected function getTrace(){
+	protected function getTrace($steps=false){
+		if($steps === false) $steps = $this->stackTraceSteps;
+
 		$backtrace = debug_backtrace();
 		array_splice($backtrace, 0, 2); // elimino las llamadas a esta clase.
 		//$backtrace = array_reverse($backtrace);
 		
 
-		if(count($backtrace) > $this->stackTraceSteps) $cC = $this->stackTraceSteps;
+		if(count($backtrace) > $steps) $cC = $steps;
 		else	$cC = count($backtrace);
 		
 		$trace = "";
 		
 
 		for($i=0;$i<$cC;$i++){
-			if(strpos($backtrace[$i]['file'], DGDEBUG_ROOT_PATH . 'debug.php') !== false) continue;
-			if(empty($backtrace[$i]['file'])) continue;
+			if(@strpos($backtrace[$i]['file'], DGDEBUG_ROOT_PATH . 'debug.php') !== false) continue;
+			if(@empty($backtrace[$i]['file'])) continue;
 			$trace .= (empty($trace) ? "" : " | ") . $backtrace[$i]['file'] . ":" . $backtrace[$i]['line'];
 		}
 
@@ -350,7 +329,7 @@ class dgDebug{
 		
 		$this->dataToString();
 		
-		$log .= "[" . date("H:i:s") . " en '" . $trace . "'] " . PHP_EOL . $this->tmp . PHP_EOL;
+		$log .= PHP_EOL . "[" . date("H:i:s") . " en '" . $trace . "'] " . PHP_EOL . $this->tmp . PHP_EOL;
 		
 		file_put_contents(DGDEBUG_LOG_PATH . $this->logFile, $log, FILE_APPEND);
 	}
@@ -367,6 +346,13 @@ class dgDebug{
 			"html" => $this->tmp
 		);
 		$this->tmp = "";
+	}
+	
+	protected function addCut(){
+		if(!empty($this->cut)){
+			$this->stack[] = (string)$this->cut;
+			$this->cut=null;
+		}
 	}
 	
 	protected function dataToString(){
@@ -472,8 +458,8 @@ class dgDebug{
 /**
  * @return dgDebug
  */
-function dbg(){
-	return dgdebug::_();
+function dbg($title=''){
+	return dgdebug::_($title);
 }
 
 register_shutdown_function(array("dgDebug", "flushConsole"));
