@@ -25,7 +25,7 @@ class dgDebug{
 	private $modeOff=false;
 	private $modeGlobalOff=false;
 	private $fixMode=false;
-	private $version = '0.4.1';
+	private $version = '0.4.2';
 	private $cut='';
 
 	protected function __construct(){
@@ -54,7 +54,7 @@ class dgDebug{
 		return self::$instance;
 	}
 	
-	public function flushConsole(){
+	public static function flushConsole(){
 		$t = self::_();
 		if(count($t->stack) > 0){
 			if(!$t->console)	return;
@@ -465,4 +465,3 @@ function dbg($title=''){
 }
 
 register_shutdown_function(array("dgDebug", "flushConsole"));
-?>
