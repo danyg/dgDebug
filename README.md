@@ -1,4 +1,4 @@
-dgDebug 0.4.1
+dgDebug 0.4.2
 =============
 
 Description:
