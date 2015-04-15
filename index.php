@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('dispaly_errors',1);
 require ('debug.php');
 $varToDump = $_SERVER;
 ?>
@@ -16,6 +14,7 @@ $varToDump = $_SERVER;
 <h1>dgDebug Test</h1>
 
 <?php
+//working example
 dbg('A block Title')
     ->d($varToDump, 'A title Here');
 ?>
